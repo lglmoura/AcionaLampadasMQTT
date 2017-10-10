@@ -2,7 +2,8 @@
 #include <PubSubClient.h> //Importa biblioteca MQTT
 
 void setup() {
-  // put your setup code here, to run once:
+  Serial.begin(115200);
+  delay(10);
 
 }
 
