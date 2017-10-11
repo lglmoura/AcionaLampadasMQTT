@@ -9,14 +9,17 @@
 #define MQTT_PASS   "semsenha"
 #define PORTA   443
 
+#define TOPICOLAMP1 "/quarto/lampada/lampada1"
+#define TOPICOLAMP2 "/quarto/lampada/lampada2"
+
 
 //constantes e variáveis globais
 WiFiClient cliente;
-
-
+PubSubClient clienteMQTT(cliente);
 
 //prototypes
 boolean conectaWiFi(void);
+void connectaClienteMQTT(void);
 
 
 
