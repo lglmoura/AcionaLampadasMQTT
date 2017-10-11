@@ -20,6 +20,7 @@ PubSubClient clienteMQTT(cliente);
 //prototypes
 boolean conectaWiFi(void);
 void connectaClienteMQTT(void);
+void iniciaMQTT(void);
 
 // 
 //Função: conectando ao servidor por MQTT
@@ -47,7 +48,14 @@ void connectaClienteMQTT(void) {
   }
 }
 
-
+//Função: inicializa parâmetros de conexão clienteMQTT(endereço do 
+//        broker, porta e seta função de callback)
+//Parâmetros: nenhum
+//Retorno: nenhum
+void iniciaMQTT(void){
+  clienteMQTT.setServer(MQTT_SERVER, PORTA);
+  clienteMQTT.setCallback(mqtt_callback); 
+}
 
 //Função: faz a conexão WiFI
 //Parâmetros: nenhum
