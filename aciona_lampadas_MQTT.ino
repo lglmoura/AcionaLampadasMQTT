@@ -57,6 +57,26 @@ void iniciaMQTT(void){
   clienteMQTT.setCallback(mqtt_callback); 
 }
 
+//Função: função de callback 
+//        esta função é chamada toda vez que uma informação de 
+//        um dos tópicos subescritos chega)
+//Parâmetros: nenhum
+//Retorno: nenhum
+void mqtt_callback(char* topic, byte* payload, unsigned int length) 
+{
+    String msg;
+ 
+    //obtem a string do payload recebido
+    for(int i = 0; i < length; i++) 
+    {
+       char c = (char)payload[i];
+       msg += c;
+    }
+  
+    Serial.println(msg);
+    
+}
+
 //Função: faz a conexão WiFI
 //Parâmetros: nenhum
 //Retorno: nenhum
