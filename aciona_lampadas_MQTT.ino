@@ -21,10 +21,31 @@ PubSubClient clienteMQTT(cliente);
 boolean conectaWiFi(void);
 void connectaClienteMQTT(void);
 
-
-
-
-
+// 
+//Função: conectando ao servidor por MQTT
+//Parâmetros: nenhum
+//Retorno: nenhum
+void connectaClienteMQTT(void) {
+  // Espera até estar conectado ao servidor
+  while (!clienteMQTT.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // Cria cliente IP randômico
+    String clientId = "ESP8266Client-";
+    clientId += String(random(0xffff), HEX);
+    // Tentativa de conexão
+    if( clienteMQTT.connect(clientId.c_str(), MQTT_USER, MQTT_PASS )) {
+      Serial.println("connected");
+      clienteMQTT.subscribe(TOPICOLAMP1);
+      clienteMQTT.subscribe(TOPICOLAMP1);
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(clienteMQTT.state());
+      Serial.println(" try again in 2 seconds");
+      // Espera 2 segundo e tenta novamente
+      delay(2000);
+    }
+  }
+}
 
 
 
