@@ -2,16 +2,28 @@
 #include <PubSubClient.h> //Importa biblioteca MQTT
 
 //defines
-#define SSID_REDE     "AndroidLG"  //coloque aqui o nome da rede que se deseja conectar
-#define SENHA_REDE    "()cell2017"  //coloque aqui a senha da rede que se deseja conectar
+#define SSID_REDE     "saeg"  //coloque aqui o nome da rede que se deseja conectar
+#define SENHA_REDE    "semsenha"  //coloque aqui a senha da rede que se deseja conectar
+#define MQTT_SERVER "iot2017.nc2.iff.edu.br"
+#define MQTT_USER   "saeg2017"
+#define MQTT_PASS   "semsenha"
+#define PORTA   443
 
 
 //constantes e variáveis globais
 WiFiClient cliente;
 
 
+
 //prototypes
 boolean conectaWiFi(void);
+
+
+
+
+
+
+
 
 //Função: faz a conexão WiFI
 //Parâmetros: nenhum
@@ -58,9 +70,13 @@ void setup() {
   if (!conectaWiFi())
      return;
 
+ 
+
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  
+
+  
   
 }
