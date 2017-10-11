@@ -37,7 +37,7 @@ void connectaClienteMQTT(void) {
     if( clienteMQTT.connect(clientId.c_str(), MQTT_USER, MQTT_PASS )) {
       Serial.println("connected");
       clienteMQTT.subscribe(TOPICOLAMP1);
-      clienteMQTT.subscribe(TOPICOLAMP1);
+      clienteMQTT.subscribe(TOPICOLAMP2);
     } else {
       Serial.print("failed, rc=");
       Serial.print(clienteMQTT.state());
@@ -122,13 +122,15 @@ void setup() {
   if (!conectaWiFi())
      return;
 
- 
+  iniciaMQTT();
 
 }
 
 void loop() {
   
-
-  
+  if (!clienteMQTT.connected()) {
+    connectaClienteMQTT();
+  }
+  clienteMQTT.loop();  
   
 }
