@@ -86,6 +86,29 @@ String mensagem(byte* payload, unsigned int length){
   return msg;
 }
 
+// 
+//Função: Trata o valor do Topico
+//Parâmetros: nenhum
+//Retorno: nenhum
+void trataTopico(char* topic,String msg){
+
+  
+    if (strcmp(topic,TOPICOLAMP1)==0){
+      if(msg.equals("1")){
+        staLed2 = HIGH;
+      }
+      if(msg.equals("0")){
+        staLed2 = LOW;
+      }
+    }
+
+    Serial.print("Led2:");
+    Serial.println(staLed2);
+    
+    
+    digitalWrite(ledPin2, staLed2);
+    
+}
 
 
 
@@ -98,9 +121,7 @@ void mqtt_callback(char* topic, byte* payload, unsigned int length)
 {     
     String msg = mensagem(payload,length);
     
-    if (strcmp(topic,TOPICOLAMP2)==0){
-      // whatever you want for this topic
-    }
+    trataTopico(topic,msg);
     
 }
 
