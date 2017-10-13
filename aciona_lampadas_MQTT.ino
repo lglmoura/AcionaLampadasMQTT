@@ -2,8 +2,8 @@
 #include <PubSubClient.h> //Importa biblioteca MQTT
 
 //defines
-#define SSID_REDE     "saeg"  //coloque aqui o nome da rede que se deseja conectar
-#define SENHA_REDE    "semsenha"  //coloque aqui a senha da rede que se deseja conectar
+#define SSID_REDE     "NEOQEAVDLV"  //coloque aqui o nome da rede que se deseja conectar
+#define SENHA_REDE    "()casa2014"  //coloque aqui a senha da rede que se deseja conectar
 #define MQTT_SERVER "iot2017.nc2.iff.edu.br"
 #define MQTT_USER   "saeg2017"
 #define MQTT_PASS   "semsenha"
@@ -21,6 +21,9 @@ PubSubClient clienteMQTT(cliente);
 boolean conectaWiFi(void);
 void connectaClienteMQTT(void);
 void iniciaMQTT(void);
+void mqtt_callback(char* topic, byte* payload, unsigned int length);
+String mensagem(byte* payload, unsigned int length);
+void trataTopico(char* topic);
 
 // 
 //Função: conectando ao servidor por MQTT
@@ -57,23 +60,43 @@ void iniciaMQTT(void){
   clienteMQTT.setCallback(mqtt_callback); 
 }
 
+String mensagem(byte* payload, unsigned int length){
+
+  String msg;
+ 
+  //obtem a string do payload recebido
+  for(int i = 0; i < length; i++) 
+  {
+     char c = (char)payload[i];
+     msg += c;
+  }
+  return msg;
+}
+
+
+// 
+//Função: Trata o valor do Topico
+//Parâmetros: nenhum
+//Retorno: nenhum
+void trataTopico(char* topic){
+  
+}
+
 //Função: função de callback 
 //        esta função é chamada toda vez que uma informação de 
 //        um dos tópicos subescritos chega)
 //Parâmetros: nenhum
 //Retorno: nenhum
 void mqtt_callback(char* topic, byte* payload, unsigned int length) 
-{
-    String msg;
- 
-    //obtem a string do payload recebido
-    for(int i = 0; i < length; i++) 
-    {
-       char c = (char)payload[i];
-       msg += c;
+{     
+    String msg = mensagem(payload,length);
+    
+    if (strcmp(topic,TOPICOLAMP1)==0){
+      Serial.println(msg);
     }
-  
-    Serial.println(msg);
+    if (strcmp(topic,TOPICOLAMP2)==0){
+      // whatever you want for this topic
+    }
     
 }
 
@@ -92,7 +115,7 @@ boolean conectaWiFi(void)
     WiFi.begin(SSID_REDE, SENHA_REDE);
     
     int contDelay = 0;
-    while ((WiFi.status() != WL_CONNECTED) && (contDelay < 30) ) 
+    while ((WiFi.status() != WL_CONNECTED) && (contDelay < 60) ) 
     {
         delay(500);
         Serial.print(".");
@@ -100,7 +123,7 @@ boolean conectaWiFi(void)
         
     }
 
-    if(contDelay>=30){
+    if(WiFi.status() != WL_CONNECTED){
        Serial.println("");
        Serial.println("WiFi não connectado");
        return false;
@@ -119,18 +142,18 @@ boolean conectaWiFi(void)
 void setup() {
   Serial.begin(115200);
   delay(10);
-  if (!conectaWiFi())
-     return;
-
-  iniciaMQTT();
+  if (conectaWiFi()){
+     iniciaMQTT();
+  }
 
 }
 
 void loop() {
   
-  if (!clienteMQTT.connected()) {
-    connectaClienteMQTT();
+  if (WiFi.status() == WL_CONNECTED){
+      if (!clienteMQTT.connected()) {
+        connectaClienteMQTT();
+      }
+      clienteMQTT.loop();  
   }
-  clienteMQTT.loop();  
-  
 }
