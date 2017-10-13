@@ -10,7 +10,11 @@
 #define PORTA   443
 
 #define TOPICOLAMP1 "/quarto/lampada/lampada1"
+#define ledPin2 D2 // Led digital 2
+int staLed2 = LOW;
+
 #define TOPICOLAMP2 "/quarto/lampada/lampada2"
+
 
 
 //constantes e variáveis globais
@@ -23,7 +27,16 @@ void connectaClienteMQTT(void);
 void iniciaMQTT(void);
 void mqtt_callback(char* topic, byte* payload, unsigned int length);
 String mensagem(byte* payload, unsigned int length);
-void trataTopico(char* topic);
+void trataTopico(char* topic, String msg);
+void iniciaGPIO(void);
+
+void iniciaGPIO(void){
+  
+  pinMode(ledPin2, OUTPUT);
+  digitalWrite(ledPin2, LOW);
+  
+}
+
 
 // 
 //Função: conectando ao servidor por MQTT
@@ -74,13 +87,7 @@ String mensagem(byte* payload, unsigned int length){
 }
 
 
-// 
-//Função: Trata o valor do Topico
-//Parâmetros: nenhum
-//Retorno: nenhum
-void trataTopico(char* topic){
-  
-}
+
 
 //Função: função de callback 
 //        esta função é chamada toda vez que uma informação de 
@@ -91,9 +98,6 @@ void mqtt_callback(char* topic, byte* payload, unsigned int length)
 {     
     String msg = mensagem(payload,length);
     
-    if (strcmp(topic,TOPICOLAMP1)==0){
-      Serial.println(msg);
-    }
     if (strcmp(topic,TOPICOLAMP2)==0){
       // whatever you want for this topic
     }
@@ -142,9 +146,11 @@ boolean conectaWiFi(void)
 void setup() {
   Serial.begin(115200);
   delay(10);
+  iniciaGPIO();
   if (conectaWiFi()){
      iniciaMQTT();
   }
+  
 
 }
 
