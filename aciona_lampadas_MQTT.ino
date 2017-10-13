@@ -10,10 +10,14 @@
 #define PORTA   443
 
 #define TOPICOLAMP1 "/quarto/lampada/lampada1"
-#define ledPin2 D2 // Led digital 2
-int staLed2 = LOW;
+#define ledTop1 D2 // Led digital 2
+int staTop1 = LOW;
 
 #define TOPICOLAMP2 "/quarto/lampada/lampada2"
+#define ledTop2 D5 // Led digital 5
+#define releTop2 D7 // Rele digital 7
+int staTop2 = LOW;
+
 
 
 
@@ -32,8 +36,14 @@ void iniciaGPIO(void);
 
 void iniciaGPIO(void){
   
-  pinMode(ledPin2, OUTPUT);
-  digitalWrite(ledPin2, LOW);
+  pinMode(ledTop1, OUTPUT);
+  digitalWrite(ledTop1, LOW);
+
+  pinMode(ledTop2, OUTPUT);
+  digitalWrite(ledTop2, LOW);
+
+  pinMode(releTop2,OUTPUT);
+  digitalWrite(releTop2,LOW);
   
 }
 
@@ -95,18 +105,34 @@ void trataTopico(char* topic,String msg){
   
     if (strcmp(topic,TOPICOLAMP1)==0){
       if(msg.equals("1")){
-        staLed2 = HIGH;
+        staTop1 = HIGH;
       }
       if(msg.equals("0")){
-        staLed2 = LOW;
+        staTop1 = LOW;
       }
     }
 
-    Serial.print("Led2:");
-    Serial.println(staLed2);
+    if (strcmp(topic,TOPICOLAMP2)==0){
+      if(msg.equals("1")){
+        staTop2 = HIGH;
+      }
+      if(msg.equals("0")){
+        staTop2 = LOW;
+      }
+    }
+    
+
+    Serial.print("Led Topico 1:");
+    Serial.println(staTop1);
+
+    Serial.print("Led Topico 2:");
+    Serial.println(staTop2);
+
     
     
-    digitalWrite(ledPin2, staLed2);
+    digitalWrite(ledTop1, staTop1);
+    digitalWrite(ledTop2, staTop2);
+    digitalWrite(releTop2,staTop2);
     
 }
 
