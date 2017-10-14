@@ -4,6 +4,8 @@
 //defines
 #define SSID_REDE     "NEOQEAVDLV"  //coloque aqui o nome da rede que se deseja conectar
 #define SENHA_REDE    "()casa2014"  //coloque aqui a senha da rede que se deseja conectar
+
+#define ID_MQTT "quarto"
 #define MQTT_SERVER "iot2017.nc2.iff.edu.br"
 #define MQTT_USER   "saeg2017"
 #define MQTT_PASS   "semsenha"
@@ -16,10 +18,8 @@ int staTop1 = LOW;
 #define TOPICOLAMP2 "/quarto/lampada/lampada2"
 #define ledTop2 D5 // Led digital 5
 #define releTop2 D7 // Rele digital 7
+#define inteTop2 D6 // Interuptor digital 2
 int staTop2 = LOW;
-
-
-
 
 //constantes e variáveis globais
 WiFiClient cliente;
@@ -44,9 +44,31 @@ void iniciaGPIO(void){
 
   pinMode(releTop2,OUTPUT);
   digitalWrite(releTop2,LOW);
+
+  pinMode(inteTop2,OUTPUT);
+  attachInterrupt(digitalPinToInterrupt(inteTop2), IntInterTop2, CHANGE);
   
 }
 
+void tratarStatusInterruptor(int valor, char* topic){
+
+      char status[1];
+      itoa(valor,status,10);
+      Serial.print("Inte status do Topico ");
+      Serial.print(topic);
+      Serial.print(" : ");
+      Serial.println(status);
+      Serial.println(clienteMQTT.connected());
+      clienteMQTT.publish(topic,status);
+      delay(500);
+  
+}
+
+void IntInterTop2(){
+  int status = digitalRead(inteTop2);
+  tratarStatusInterruptor(status,TOPICOLAMP2);
+ 
+}
 
 // 
 //Função: conectando ao servidor por MQTT
@@ -56,20 +78,18 @@ void connectaClienteMQTT(void) {
   // Espera até estar conectado ao servidor
   while (!clienteMQTT.connected()) {
     Serial.print("Attempting MQTT connection...");
-    // Cria cliente IP randômico
-    String clientId = "ESP8266Client-";
-    clientId += String(random(0xffff), HEX);
+    
     // Tentativa de conexão
-    if( clienteMQTT.connect(clientId.c_str(), MQTT_USER, MQTT_PASS )) {
+    if( clienteMQTT.connect(ID_MQTT, MQTT_USER, MQTT_PASS )) {
       Serial.println("connected");
       clienteMQTT.subscribe(TOPICOLAMP1);
       clienteMQTT.subscribe(TOPICOLAMP2);
     } else {
       Serial.print("failed, rc=");
       Serial.print(clienteMQTT.state());
-      Serial.println(" try again in 2 seconds");
+      Serial.println(" try again in 5 seconds");
       // Espera 2 segundo e tenta novamente
-      delay(2000);
+      delay(5000);
     }
   }
 }
@@ -127,14 +147,14 @@ void trataTopico(char* topic,String msg){
 
     Serial.print("Led Topico 2:");
     Serial.println(staTop2);
-
-    
+  
     
     digitalWrite(ledTop1, staTop1);
     digitalWrite(ledTop2, staTop2);
     digitalWrite(releTop2,staTop2);
     
 }
+
 
 
 
@@ -190,6 +210,8 @@ boolean conectaWiFi(void)
 }
 
 
+
+
 void setup() {
   Serial.begin(115200);
   delay(10);
@@ -207,6 +229,10 @@ void loop() {
       if (!clienteMQTT.connected()) {
         connectaClienteMQTT();
       }
-      clienteMQTT.loop();  
+     
+      clienteMQTT.loop(); 
+  }else{
+    conectaWiFi();   
+      
   }
 }
